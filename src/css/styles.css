@@ -403,7 +403,7 @@ nav {
 
 .skills-category {
     flex: 1;
-    min-width: 300px;
+    min-width: 200px;
     background-color: #fff;
     padding: 25px;
     border-radius: 10px;
@@ -656,8 +656,14 @@ footer {
 }
 
 @media screen and (max-width: 768px) {
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
     .nav-links {
         position: absolute;
+        display: none;
         right: 0;
         top: 70px;
         background-color: var(--dark-color);
@@ -674,6 +680,7 @@ footer {
     }
 
     .nav-active {
+        display: inherit;
         transform: translateX(0%);
     }
 

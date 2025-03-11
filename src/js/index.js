@@ -74,42 +74,69 @@ document.addEventListener('DOMContentLoaded', function() {
   const contactForm = document.getElementById('contact-form');
   
   if (contactForm) {
-      contactForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Получение данных формы
-          const formData = {
-              name: document.getElementById('name').value,
-              email: document.getElementById('email').value,
-              subject: document.getElementById('subject').value,
-              message: document.getElementById('message').value
-          };
-          
-          // Симуляция отправки формы
-          // В реальном проекте здесь был бы AJAX запрос на сервер
-          console.log('Отправка формы:', formData);
-          
-          // Показать уведомление пользователю
-          alert('Сообщение отправлено! Спасибо за обращение.');
-          
-          // Сбросить форму
-          contactForm.reset();
-      });
-  }
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Получение данных формы
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.textContent = 'Отправка...';
+        submitBtn.disabled = true;
+        
+        // Создаем формдату для Google Forms
+        // Замените "entry.XXXXXXX" на правильные идентификаторы полей из вашей Google формы
+        const formData = new FormData();
+        formData.append('entry.380780782', name);
+        formData.append('entry.1712161483', email);
+        formData.append('entry.1680705949', subject);
+        formData.append('entry.967542549', message);
+        
+        // URL вашей Google формы
+        const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeZXKtmROfa9baO9XlehVyCOmpeF_txadaRlTG4Kezwnmi_7g/viewform?usp=dialog';
+        
+        
+        // Создаем iframe для отправки (чтобы обойти CORS)
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        // Создаем форму внутри iframe
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const iframeForm = iframeDoc.createElement('form');
+        iframeForm.action = googleFormUrl;
+        iframeForm.method = 'POST';
+        
+        // Заполняем форму скрытыми полями
+        for (const [key, value] of formData.entries()) {
+            const input = iframeDoc.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            iframeForm.appendChild(input);
+        }
+        
+        iframeDoc.body.appendChild(iframeForm);
+        
+        // Отправка и очистка
+        iframeForm.submit();
+        
+        // Удаляем iframe после отправки
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+            submitBtn.textContent = originalBtnText;
+            submitBtn.disabled = false;
+            
+            alert('Сообщение отправлено! Спасибо за обращение.');
+            contactForm.reset();
+        }, 1000);
+    });
+}
   
-  // Эффект паралакса для фоновых шестеренок
-  window.addEventListener('scroll', function() {
-      const scrollPosition = window.pageYOffset;
-      const gear1 = document.querySelector('.gear1');
-      const gear2 = document.querySelector('.gear2');
-      const gear3 = document.querySelector('.gear3');
-      
-      if (gear1 && gear2 && gear3) {
-          gear1.style.transform = `rotate(${scrollPosition * 0.1}deg)`;
-          gear2.style.transform = `rotate(-${scrollPosition * 0.08}deg)`;
-          gear3.style.transform = `rotate(${scrollPosition * 0.12}deg)`;
-      }
-  });
   
   // Анимация при скролле
   const animateOnScroll = function() {
@@ -158,3 +185,4 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 });
+
