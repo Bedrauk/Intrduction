@@ -198,8 +198,8 @@ nav {
 .blueprint-container {
     position: relative;
     width: 100%;
-    max-width: 500px;
-    height: 400px;
+    max-width: 600px;
+    height: 600px;
     perspective: 1000px;
 }
 

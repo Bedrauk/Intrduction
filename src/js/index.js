@@ -74,68 +74,38 @@ document.addEventListener('DOMContentLoaded', function() {
   const contactForm = document.getElementById('contact-form');
   
   if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Получение данных формы
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
-        
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalBtnText = submitBtn.textContent;
-        submitBtn.textContent = 'Отправка...';
-        submitBtn.disabled = true;
-        
-        // Создаем формдату для Google Forms
-        // Замените "entry.XXXXXXX" на правильные идентификаторы полей из вашей Google формы
-        const formData = new FormData();
-        formData.append('entry.380780782', name);
-        formData.append('entry.1712161483', email);
-        formData.append('entry.1680705949', subject);
-        formData.append('entry.967542549', message);
-        
-        // URL вашей Google формы
-        const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeZXKtmROfa9baO9XlehVyCOmpeF_txadaRlTG4Kezwnmi_7g/viewform?usp=dialog';
-        
-        
-        // Создаем iframe для отправки (чтобы обойти CORS)
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        
-        // Создаем форму внутри iframe
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const iframeForm = iframeDoc.createElement('form');
-        iframeForm.action = googleFormUrl;
-        iframeForm.method = 'POST';
-        
-        // Заполняем форму скрытыми полями
-        for (const [key, value] of formData.entries()) {
-            const input = iframeDoc.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            iframeForm.appendChild(input);
-        }
-        
-        iframeDoc.body.appendChild(iframeForm);
-        
-        // Отправка и очистка
-        iframeForm.submit();
-        
-        // Удаляем iframe после отправки
-        setTimeout(() => {
-            document.body.removeChild(iframe);
-            submitBtn.textContent = originalBtnText;
-            submitBtn.disabled = false;
-            
-            alert('Сообщение отправлено! Спасибо за обращение.');
-            contactForm.reset();
-        }, 1000);
-    });
-}
+      contactForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const submitBtn = this.querySelector('button[type="submit"]');
+          const originalBtnText = submitBtn.textContent;
+          submitBtn.textContent = 'Отправка...';
+          submitBtn.disabled = true;
+          
+          const formData = new FormData(this);
+          
+          fetch(this.action, {
+              method: 'POST',
+              body: formData,
+              headers: {
+                  'Accept': 'application/json'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              alert('Сообщение отправлено! Спасибо за обращение.');
+              contactForm.reset();
+          })
+          .catch(error => {
+              console.error('Ошибка:', error);
+              alert('Произошла ошибка при отправке сообщения. Пожалуйста, попробуйте позже.');
+          })
+          .finally(() => {
+              submitBtn.textContent = originalBtnText;
+              submitBtn.disabled = false;
+          });
+      });
+  }
   
   
   // Анимация при скролле
