@@ -145,12 +145,12 @@ document.addEventListener('DOMContentLoaded', function() {
           const xPercent = mouseX / bounds.width - 0.5;
           const yPercent = mouseY / bounds.height - 0.5;
           
-          const overlay = this.querySelector('.portfolio-overlay');
+          const overlay = this.querySelector('.portfolio-info');
           overlay.style.transform = `translate(${xPercent * 10}px, ${yPercent * 10}px)`;
       });
       
       image.addEventListener('mouseleave', function() {
-          const overlay = this.querySelector('.portfolio-overlay');
+          const overlay = this.querySelector('.portfolio-info');
           overlay.style.transform = 'translate(0, 0)';
       });
   });
